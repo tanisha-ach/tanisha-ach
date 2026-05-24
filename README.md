@@ -18,7 +18,7 @@
 
 I'm a research-led UX designer who has spent **6+ years** shipping enterprise B2B and B2C digital products for IBM, Lowe's, Mondelez, AMEX, and GSK — across FinTech, AI tooling, and supply chain.
 
-I'm currently finishing a **Master of Information Science (GPA 4.0)** at UT Austin, concentrating in Human-AI Interaction, Accessible UX, and Quantitative UX research.
+I'm currently finishing a **Master of Information Science** at UT Austin, concentrating in Human-AI Interaction, Accessible UX, and Quantitative UX research.
 
 My current practice: I use **Claude Code** to move directly from design brief to deployed, production-grade frontend interface — collapsing the design-to-engineering handoff into a single workflow.
 
@@ -81,11 +81,11 @@ Research insight → Figma prototype → Design brief → Claude Code → Deploy
 
 ## Featured Work
 
-→ **[AI-Built Frontend Portfolio](YOUR_PORTFOLIO_URL)** — production interfaces shipped with Claude Code
+→ **[AI-Built Frontend Portfolio](https://tanisha-ach.github.io/portfolio/)** — production interfaces shipped with Claude Code
 
 ---
 
 <div align="center">
-  <sub>MS Information Science · University of Texas at Austin · GPA 4.0 · Expected May 2026</sub><br>
+  <sub>MS Information Science · University of Texas at Austin · Expected May 2026</sub><br>
   <sub>CPACC Certified · Austin, TX</sub>
 </div>
