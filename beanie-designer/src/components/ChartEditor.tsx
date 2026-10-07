@@ -89,15 +89,20 @@ export function ChartEditor() {
     }
   }, [chart, palette, cell, cssW, cssH, hover, s.mirror]);
 
-  const cellAt = (e: React.PointerEvent): [number, number] | null => {
+  const cellAt = (e: React.PointerEvent, clamp = false): [number, number] | null => {
     const r = canvasRef.current!.getBoundingClientRect();
-    const x = Math.floor((e.clientX - r.left) / cell);
-    const y = Math.floor((e.clientY - r.top) / cell);
+    let x = Math.floor((e.clientX - r.left) / cell);
+    let y = Math.floor((e.clientY - r.top) / cell);
+    if (clamp) {
+      x = Math.max(0, Math.min(chart.w - 1, x));
+      y = Math.max(0, Math.min(chart.h - 1, y));
+    }
     return x >= 0 && y >= 0 && x < chart.w && y < chart.h ? [x, y] : null;
   };
 
   const apply = (e: React.PointerEvent, first: boolean) => {
-    const p = cellAt(e);
+    // Mid-stroke, clamp to the edge so fast drags past the grid still reach the last cell.
+    const p = cellAt(e, !first);
     if (!p) return;
     const st = useDesign.getState();
     if (st.tool === 'pick') {
