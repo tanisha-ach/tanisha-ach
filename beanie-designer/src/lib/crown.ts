@@ -60,9 +60,7 @@ function planWedge(style: Extract<CrownStyle, { kind: 'wedge' }>, sts: number): 
   let r = 0;
   for (let i = 0; i < slow; i++, r += 2) shapingRows.push(r);
   for (let i = 0; i < fast; i++, r += 1) shapingRows.push(r);
-  const steps = [
-    `Set-Up Round: *K${s}, place marker; repeat from * to end of round. [${S} sections of ${s} sts]`,
-  ];
+  const steps = [`Set-Up Round: *K${s}, place marker; repeat from * to end of round. [${S} sections of ${s} sts]`];
   if (slow > 0) {
     steps.push(`Decrease Round: *Knit to 2 sts before marker, k2tog, slip marker; repeat from * to end. [${S} sts decreased]`);
     steps.push('Next Round: Knit.');

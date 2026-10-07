@@ -1,5 +1,6 @@
 const PATHS = {
-  brush: 'M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8 9.2 12zM8 13.5l2.5 2.5c-.4 2.6-2.3 4.5-5.5 4.5H3c1.2-1 1.5-2.2 1.6-3.5C4.8 15 6.2 13.6 8 13.5z',
+  brush:
+    'M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8 9.2 12zM8 13.5l2.5 2.5c-.4 2.6-2.3 4.5-5.5 4.5H3c1.2-1 1.5-2.2 1.6-3.5C4.8 15 6.2 13.6 8 13.5z',
   bucket: 'M5 11 12 4l7 7-7 7zM12 4V2M19.5 15s1.5 2 1.5 3a1.5 1.5 0 0 1-3 0c0-1 1.5-3 1.5-3zM5 11h14',
   picker: 'm14 6 4 4M17.5 2.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4zM3 21l3-3',
   mirror: 'M12 3v18M8 7 4 12l4 5zM16 7l4 5-4 5z',
@@ -23,7 +24,17 @@ const PATHS = {
 
 export function Icon({ name, size = 16 }: { name: keyof typeof PATHS; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <path d={PATHS[name]} />
     </svg>
   );

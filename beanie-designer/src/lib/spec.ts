@@ -98,7 +98,7 @@ export function computeSpec(input: DesignInput): HatSpec {
   }
 
   // Body = everything between the brim band and the crown, in knitted length.
-  const rollIn = type.brim.kind === 'rolled' ? type.brim.rollIn ?? 0.5 : 0;
+  const rollIn = type.brim.kind === 'rolled' ? (type.brim.rollIn ?? 0.5) : 0;
   const bodyIn = Math.max(0.5, dims.heightIn + rollIn - brimBandIn - foldIn - crownIn);
   const bodyRows = Math.max(2, Math.round(bodyIn * rowsPerIn));
   const wornHeightIn = dims.heightIn - foldIn;
@@ -114,7 +114,8 @@ export function computeSpec(input: DesignInput): HatSpec {
   const repeats = input.placement === 'repeat' ? bodySts / chart.w : 1;
   const chartStartCol = Math.floor(bodySts / 2 - chart.w / 2);
   const chartRowsShown = Math.min(chart.h, bodyRows);
-  if (chart.h > bodyRows) warnings.push(`The chart has ${chart.h} rows but the body only has ${bodyRows}; the top rows are cut off.`);
+  if (chart.h > bodyRows)
+    warnings.push(`The chart has ${chart.h} rows but the body only has ${bodyRows}; the top rows are cut off.`);
   const chartStartRow = Math.round(Math.max(0, bodyRows - chart.h) * input.verticalPos);
 
   const goodWidths: number[] = [];

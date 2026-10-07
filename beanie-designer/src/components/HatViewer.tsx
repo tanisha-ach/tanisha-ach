@@ -101,12 +101,18 @@ function HatModel({ spec }: { spec: HatSpec }) {
   const ribR = R * 0.975;
 
   const bodyStart = kind === 'rolled' ? 0 : kind === 'hem-cuff' ? spec.dims.brimIn : spec.brimBandIn;
-  const topY = bodyStart + spec.bodyIn;
-  const domeH = domeHeight(R * 0.985, spec.crownIn);
+  // Worn on a head, the upper body rounds over with the crown, so the dome
+  // takes up more fabric than the crown shaping alone.
+  const totalArc = spec.bodyIn + spec.crownIn;
+  const domeA = R * 0.985;
+  const domeArc = Math.max(spec.crownIn, Math.min(quarterEllipse(domeA, R * 0.9), totalArc * 0.7));
+  const domeH = domeHeight(domeA, domeArc);
+  const cylH = Math.max(0, totalArc - domeArc);
+  const topY = bodyStart + cylH;
   const slouch = type.slouch;
 
   const deform = useMemo(() => {
-    const ys = bodyStart + spec.bodyIn * 0.45;
+    const ys = bodyStart + cylH * 0.5;
     const span = topY + domeH - ys;
     return (v: THREE.Vector3) => {
       if (!slouch || v.y <= ys) return v;
@@ -115,18 +121,17 @@ function HatModel({ spec }: { spec: HatSpec }) {
       v.y -= slouch * R * 0.3 * t * t;
       return v;
     };
-  }, [bodyStart, spec.bodyIn, topY, domeH, slouch, R]);
+  }, [bodyStart, cylH, topY, domeH, slouch, R]);
 
   const bodyGeo = useMemo(() => {
     const pts: Pt[] = [];
     for (let i = 0; i <= 24; i++) {
       const t = i / 24;
-      pts.push([R * (1 + 0.012 * Math.sin(Math.PI * t) - 0.015 * t), bodyStart + t * spec.bodyIn]);
+      pts.push([R * (1 + 0.012 * Math.sin(Math.PI * t)) - (R - domeA) * t, bodyStart + t * cylH]);
     }
-    const a = R * 0.985;
     for (let i = 1; i <= 60; i++) {
       const th = (i / 60) * (Math.PI / 2);
-      pts.push([Math.max(0, a * Math.cos(th)), topY + domeH * Math.sin(th)]);
+      pts.push([Math.max(0, domeA * Math.cos(th)), topY + domeH * Math.sin(th)]);
     }
     const { points } = resample(pts, 200);
     const g = new THREE.LatheGeometry(points, 200, Math.PI, Math.PI * 2);
@@ -140,12 +145,23 @@ function HatModel({ spec }: { spec: HatSpec }) {
       g.computeVertexNormals();
     }
     return g;
-  }, [R, bodyStart, spec.bodyIn, topY, domeH, slouch, deform]);
+  }, [R, domeA, bodyStart, cylH, topY, domeH, slouch, deform]);
 
   const brimGeos = useMemo(() => {
     const out: { geo: THREE.BufferGeometry; purl?: boolean }[] = [];
     if (kind === 'rib') {
-      out.push({ geo: lathe([[ribR - 0.1, 0], [ribR - 0.02, 0.03], [ribR, 0.1], [ribR, spec.brimBandIn], [R, spec.brimBandIn + 0.05]], true) });
+      out.push({
+        geo: lathe(
+          [
+            [ribR - 0.1, 0],
+            [ribR - 0.02, 0.03],
+            [ribR, 0.1],
+            [ribR, spec.brimBandIn],
+            [R, spec.brimBandIn + 0.05],
+          ],
+          true,
+        ),
+      });
     } else if (kind === 'hem-cuff') {
       const Ro = R * 1.025;
       const arc: Pt[] = [];
@@ -155,7 +171,15 @@ function HatModel({ spec }: { spec: HatSpec }) {
       }
       out.push({ geo: lathe([[Ro - 0.25, 0.02], ...arc, [Ro, spec.dims.brimIn - 0.05], [R, spec.dims.brimIn + 0.02]], true) });
     } else if (kind === 'fold-cuff') {
-      out.push({ geo: lathe([[ribR, 0], [ribR, spec.brimBandIn + 0.05]], true) });
+      out.push({
+        geo: lathe(
+          [
+            [ribR, 0],
+            [ribR, spec.brimBandIn + 0.05],
+          ],
+          true,
+        ),
+      });
       // The fold: a half-round turning the inner rib layer up into the outer cuff.
       const Ro = R * 1.065;
       const r = (Ro - ribR) / 2;
@@ -234,7 +258,13 @@ function HatModel({ spec }: { spec: HatSpec }) {
   const pomPos = useMemo(() => deform(new THREE.Vector3(0, topY + domeH + 1.2, 0)), [deform, topY, domeH]);
 
   const headR = R * 0.95;
-  const fabric = { roughness: 0.92, sheen: 1, sheenRoughness: 0.7, sheenColor: new THREE.Color('#ffffff'), side: THREE.DoubleSide };
+  const fabric = {
+    roughness: 0.92,
+    sheen: 1,
+    sheenRoughness: 0.7,
+    sheenColor: new THREE.Color('#ffffff'),
+    side: THREE.DoubleSide,
+  };
 
   return (
     <group>
@@ -255,7 +285,14 @@ function HatModel({ spec }: { spec: HatSpec }) {
       ))}
       {pomPom && (
         <mesh geometry={pomGeo} position={pomPos} castShadow>
-          <meshPhysicalMaterial color={palette[pomColor] ?? palette[0]} roughness={1} sheen={1} sheenRoughness={0.9} bumpMap={fuzzTex} bumpScale={3} />
+          <meshPhysicalMaterial
+            color={palette[pomColor] ?? palette[0]}
+            roughness={1}
+            sheen={1}
+            sheenRoughness={0.9}
+            bumpMap={fuzzTex}
+            bumpScale={3}
+          />
         </mesh>
       )}
       {showHead && (
@@ -274,12 +311,17 @@ export function HatViewer() {
   const showHead = useDesign((s) => s.showHead);
   const set = useDesign((s) => s.set);
   const R = (spec.finishedCircIn * 1.06) / (2 * Math.PI);
-  const headBottom = 0.9 - R * 0.95 * 1.18;
-  const midY = (spec.wornHeightIn + headBottom) / 2 + 0.6;
+  const floor = showHead ? 0.9 - R * 0.95 * 1.18 : -0.15;
+  const midY = (spec.wornHeightIn + floor) / 2;
 
   return (
     <div className="viewer">
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, midY + 7, 27], fov: 34 }} gl={{ preserveDrawingBuffer: true, antialias: true }}>
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        camera={{ position: [0, midY + 7, 23], fov: 34 }}
+        gl={{ preserveDrawingBuffer: true, antialias: true }}
+      >
         <ambientLight intensity={0.35} />
         <directionalLight position={[10, 16, 12]} intensity={1.7} castShadow shadow-mapSize={[2048, 2048]} />
         <directionalLight position={[-12, 6, -6]} intensity={0.5} color="#ffd9c2" />
@@ -289,11 +331,12 @@ export function HatViewer() {
           <Lightformer intensity={0.6} position={[10, 0, -4]} rotation-y={-Math.PI / 2} scale={[10, 10, 1]} color="#dfe8ff" />
         </Environment>
         <HatModel spec={spec} />
-        <ContactShadows position={[0, headBottom - 0.05, 0]} opacity={0.28} blur={2.6} scale={22} far={8} />
+        <ContactShadows position={[0, floor - 0.05, 0]} opacity={0.3} blur={2.6} scale={22} far={8} />
         <OrbitControls
           target={[0, midY, 0]}
           enablePan={false}
-          minDistance={12}
+          maxPolarAngle={Math.PI * 0.62}
+          minDistance={10}
           maxDistance={48}
           autoRotate={autoRotate}
           autoRotateSpeed={1.1}

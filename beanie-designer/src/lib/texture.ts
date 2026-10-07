@@ -3,12 +3,19 @@ import { bodyCell, type HatSpec, type Placement } from './spec';
 
 export type StitchKind = 'knit' | 'purl' | 'slip';
 
-export function shade(hex: string, amt: number): string {
-  const n = parseInt(hex.slice(1), 16);
+function parseColor(css: string): [number, number, number] {
+  if (css.startsWith('#')) {
+    const n = parseInt(css.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  const [r, g, b] = css.match(/\d+/g)!.map(Number);
+  return [r, g, b];
+}
+
+/** Lighten (amt > 0) or darken (amt < 0) a #hex or rgb() colour. */
+export function shade(css: string, amt: number): string {
   const f = (c: number) => Math.max(0, Math.min(255, Math.round(amt < 0 ? c * (1 + amt) : c + (255 - c) * amt)));
-  const r = f((n >> 16) & 255);
-  const g = f((n >> 8) & 255);
-  const b = f(n & 255);
+  const [r, g, b] = parseColor(css).map(f);
   return `rgb(${r},${g},${b})`;
 }
 
@@ -27,7 +34,7 @@ function sprite(kind: StitchKind, color: string | null, w: number, h: number, fl
   cv.height = Math.max(1, h);
   const ctx = cv.getContext('2d')!;
   const bump = color === null;
-  ctx.fillStyle = bump ? '#262626' : shade(color, -0.42);
+  ctx.fillStyle = bump ? '#262626' : shade(color, kind === 'purl' ? -0.28 : -0.42);
   ctx.fillRect(0, 0, w, h);
 
   if (kind === 'purl') {
@@ -170,7 +177,7 @@ export function drawRib(sts: number, rowsPerIn: number, rib: string, color: stri
         continue;
       }
       const kind: StitchKind = k === 'P' ? 'purl' : 'knit';
-      const col2 = kind === 'purl' && rib.length > 1 ? shade(color, -0.12) : color;
+      const col2 = kind === 'purl' && rib.length > 1 ? shade(color, -0.06) : color;
       c.drawImage(sprite(kind, col2, cw, rh, false), col * cw, y);
       b.drawImage(sprite(kind, null, cw, rh, false), col * cw, y);
     }

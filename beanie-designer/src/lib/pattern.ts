@@ -57,9 +57,7 @@ function chartLines(spec: HatSpec, o: PatternOptions, topDown: boolean): string[
     ? ' Work the chart from the top row down so the motif is the right way up when the hat is worn; read every round from right to left.'
     : ' Read every round from right to left.';
   if (o.placement === 'repeat') {
-    lines.push(
-      `Work ${rangeTxt} of the Chart, repeating the ${chart.w}-st repeat ${spec.repeats} times around.${readTxt}`,
-    );
+    lines.push(`Work ${rangeTxt} of the Chart, repeating the ${chart.w}-st repeat ${spec.repeats} times around.${readTxt}`);
     if (o.tileVertical) lines.push('Continue repeating the Chart rounds until the body length below is reached.');
   } else {
     const after = spec.bodySts - spec.chartStartCol - chart.w;
@@ -117,7 +115,9 @@ export function writePattern(spec: HatSpec, o: PatternOptions): PatternSection[]
   } else {
     const brim: string[] = [];
     if (type.brim.kind === 'hem-cuff') {
-      brim.push(`With scrap yarn, use a Provisional Cast On to cast on ${spec.brimSts} sts. Place marker and join to work in the round.`);
+      brim.push(
+        `With scrap yarn, use a Provisional Cast On to cast on ${spec.brimSts} sts. Place marker and join to work in the round.`,
+      );
       brim.push(`Change to ${bc}. Round 1: Knit.`);
       brim.push(`Round 2: ${ribRound(type.brim.rib).replace('slip 1', 'slip 1 purlwise wyib')}`);
       brim.push(
@@ -127,9 +127,13 @@ export function writePattern(spec: HatSpec, o: PatternOptions): PatternSection[]
         'Hem: Fold the cast-on edge up inside the cuff. Slip the provisional stitches onto a spare needle, removing the scrap yarn. Holding the needles parallel, knit together 1 st from the front needle with 1 st from the back needle all the way around.',
       );
     } else {
-      brim.push(`With ${bc}, cast on ${spec.brimSts} sts (Long Tail Cast On). Place marker and join to work in the round, being careful not to twist.`);
+      brim.push(
+        `With ${bc}, cast on ${spec.brimSts} sts (Long Tail Cast On). Place marker and join to work in the round, being careful not to twist.`,
+      );
       brim.push(`Round 1: ${ribRound(type.brim.rib)}`);
-      brim.push(`Repeat Round 1 until the piece measures ${inch(dims.brimIn)} from the cast-on edge (about ${spec.brimRows} rounds).`);
+      brim.push(
+        `Repeat Round 1 until the piece measures ${inch(dims.brimIn)} from the cast-on edge (about ${spec.brimRows} rounds).`,
+      );
     }
     const adj = adjustRound(spec.brimSts, spec.bodySts);
     if (adj) brim.push(adj);

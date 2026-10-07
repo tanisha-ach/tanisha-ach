@@ -11,7 +11,14 @@ export function HatGlyph({ type }: { type: HatType }) {
     <svg className="glyph" viewBox="0 0 52 50" aria-hidden>
       <path d={body} />
       {brim > 0 && (
-        <rect x={type.brim.kind === 'rib' ? 10 : 8.5} y={44 - brim} width={type.brim.kind === 'rib' ? 32 : 35} height={brim} rx={type.brim.kind === 'rib' ? 0 : 2} className="glyph-brim" />
+        <rect
+          x={type.brim.kind === 'rib' ? 10 : 8.5}
+          y={44 - brim}
+          width={type.brim.kind === 'rib' ? 32 : 35}
+          height={brim}
+          rx={type.brim.kind === 'rib' ? 0 : 2}
+          className="glyph-brim"
+        />
       )}
       {brim > 0 &&
         Array.from({ length: 7 }, (_, i) => (

@@ -16,6 +16,7 @@ export function ChartEditor() {
   const [wrapW, setWrapW] = useState(600);
   const [hover, setHover] = useState<[number, number] | null>(null);
   const painting = useRef(false);
+  const last = useRef<[number, number] | null>(null);
   const { chart, palette } = s;
 
   useLayoutEffect(() => {
@@ -108,7 +109,14 @@ export function ChartEditor() {
       return;
     }
     if (first) st.beginStroke();
-    st.paint(p[0], p[1]);
+    // Fill in cells skipped between pointer events on a fast drag.
+    const [x0, y0] = first || !last.current ? p : last.current;
+    const n = Math.max(Math.abs(p[0] - x0), Math.abs(p[1] - y0));
+    for (let i = 0; i <= n; i++) {
+      const t = n ? i / n : 0;
+      st.paint(Math.round(x0 + (p[0] - x0) * t), Math.round(y0 + (p[1] - y0) * t));
+    }
+    last.current = p;
   };
 
   const onKey = useCallback((e: KeyboardEvent) => {
@@ -182,7 +190,12 @@ export function ChartEditor() {
               <Icon name={t.icon} />
             </button>
           ))}
-          <button className={s.mirror ? 'on' : ''} onClick={() => s.set({ mirror: !s.mirror })} title="Mirror painting (M)" aria-pressed={s.mirror}>
+          <button
+            className={s.mirror ? 'on' : ''}
+            onClick={() => s.set({ mirror: !s.mirror })}
+            title="Mirror painting (M)"
+            aria-pressed={s.mirror}
+          >
             <Icon name="mirror" />
           </button>
         </div>
@@ -281,7 +294,10 @@ export function ChartEditor() {
             setHover(p);
             if (painting.current && s.tool === 'paint') apply(e, false);
           }}
-          onPointerUp={() => (painting.current = false)}
+          onPointerUp={() => {
+            painting.current = false;
+            last.current = null;
+          }}
           onPointerLeave={() => setHover(null)}
           onContextMenu={(e) => e.preventDefault()}
           aria-label="Colorwork chart grid"
@@ -289,7 +305,9 @@ export function ChartEditor() {
       </div>
       <div className="chart-foot">
         <span>
-          {hover ? `Stitch ${chart.w - hover[0]}, round ${chart.h - hover[1]}` : 'Click or drag to paint. Charts read right to left, bottom to top.'}
+          {hover
+            ? `Stitch ${chart.w - hover[0]}, round ${chart.h - hover[1]}`
+            : 'Click or drag to paint. Charts read right to left, bottom to top.'}
         </span>
         {float > 5 && <span className="warn-pill">Longest float {float} sts</span>}
       </div>

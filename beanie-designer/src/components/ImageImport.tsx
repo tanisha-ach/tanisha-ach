@@ -110,7 +110,13 @@ export function ImageImport() {
               <span>
                 Width <b>{width} sts</b>
               </span>
-              <input type="range" min={6} max={Math.min(80, spec.bodySts)} value={width} onChange={(e) => setWidth(+e.target.value)} />
+              <input
+                type="range"
+                min={6}
+                max={Math.min(80, spec.bodySts)}
+                value={width}
+                onChange={(e) => setWidth(+e.target.value)}
+              />
             </label>
             <label className="slider">
               <span>

@@ -26,7 +26,12 @@ export function HatControls() {
         <span className="field-label">Style</span>
         <div className="type-grid">
           {HAT_TYPES.map((t) => (
-            <button key={t.id} className={`type-card ${s.hatTypeId === t.id ? 'on' : ''}`} onClick={() => s.setHatType(t.id)} aria-pressed={s.hatTypeId === t.id}>
+            <button
+              key={t.id}
+              className={`type-card ${s.hatTypeId === t.id ? 'on' : ''}`}
+              onClick={() => s.setHatType(t.id)}
+              aria-pressed={s.hatTypeId === t.id}
+            >
               <HatGlyph type={t} />
               <span className="type-name">{t.name}</span>
               <span className="type-tag">{t.tagline}</span>
@@ -43,7 +48,13 @@ export function HatControls() {
         <span className="field-label">Size</span>
         <div className="seg seg-wide" role="radiogroup" aria-label="Size">
           {HAT_SIZES.map((z) => (
-            <button key={z.id} className={s.sizeId === z.id ? 'on' : ''} onClick={() => s.set({ sizeId: z.id })} role="radio" aria-checked={s.sizeId === z.id}>
+            <button
+              key={z.id}
+              className={s.sizeId === z.id ? 'on' : ''}
+              onClick={() => s.set({ sizeId: z.id })}
+              role="radio"
+              aria-checked={s.sizeId === z.id}
+            >
               <span>{z.name}</span>
               <small>
                 {z.head[0]}–{z.head[1]}"
@@ -63,7 +74,9 @@ export function HatControls() {
             <input
               type="checkbox"
               checked={s.usePatternGauge}
-              onChange={(e) => s.set({ usePatternGauge: e.target.checked, ...(e.target.checked ? { gauge: { ...type.gauge } } : {}) })}
+              onChange={(e) =>
+                s.set({ usePatternGauge: e.target.checked, ...(e.target.checked ? { gauge: { ...type.gauge } } : {}) })
+              }
             />
             Use pattern gauge
           </label>
@@ -118,10 +131,20 @@ export function HatControls() {
       <div className="field">
         <span className="field-label">Motif placement</span>
         <div className="seg seg-wide" role="radiogroup" aria-label="Motif placement">
-          <button className={s.placement === 'repeat' ? 'on' : ''} onClick={() => s.set({ placement: 'repeat' })} role="radio" aria-checked={s.placement === 'repeat'}>
+          <button
+            className={s.placement === 'repeat' ? 'on' : ''}
+            onClick={() => s.set({ placement: 'repeat' })}
+            role="radio"
+            aria-checked={s.placement === 'repeat'}
+          >
             Repeat around
           </button>
-          <button className={s.placement === 'single' ? 'on' : ''} onClick={() => s.set({ placement: 'single' })} role="radio" aria-checked={s.placement === 'single'}>
+          <button
+            className={s.placement === 'single' ? 'on' : ''}
+            onClick={() => s.set({ placement: 'single' })}
+            role="radio"
+            aria-checked={s.placement === 'single'}
+          >
             Once on the front
           </button>
         </div>
@@ -146,7 +169,14 @@ export function HatControls() {
         {!(s.placement === 'repeat' && s.tileVertical) && (
           <label className="slider">
             <span>Height on the body</span>
-            <input type="range" min={0} max={1} step={0.01} value={s.verticalPos} onChange={(e) => s.set({ verticalPos: +e.target.value })} />
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={s.verticalPos}
+              onChange={(e) => s.set({ verticalPos: +e.target.value })}
+            />
           </label>
         )}
       </div>
@@ -167,7 +197,9 @@ export function HatControls() {
           <select
             className="select"
             value={s.pomPom ? s.pomColor : -1}
-            onChange={(e) => (+e.target.value < 0 ? s.set({ pomPom: false }) : s.set({ pomPom: true, pomColor: +e.target.value }))}
+            onChange={(e) =>
+              +e.target.value < 0 ? s.set({ pomPom: false }) : s.set({ pomPom: true, pomColor: +e.target.value })
+            }
           >
             <option value={-1}>None</option>
             {s.palette.map((_, i) => (

@@ -33,7 +33,10 @@ export default function App() {
           </div>
         </div>
         <div className="row-actions">
-          <button className="btn ghost" onClick={() => download(renderChartPng(chart, palette, spec), `${spec.type.id}-${spec.size.id}-chart.png`)}>
+          <button
+            className="btn ghost"
+            onClick={() => download(renderChartPng(chart, palette, spec), `${spec.type.id}-${spec.size.id}-chart.png`)}
+          >
             <Icon name="download" /> Chart PNG
           </button>
           <button className="btn primary" onClick={() => setShowPattern(true)}>

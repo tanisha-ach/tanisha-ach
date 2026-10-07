@@ -54,7 +54,10 @@ export function PatternDialog({ onClose }: { onClose: () => void }) {
             <button
               className="btn primary"
               onClick={() =>
-                download(URL.createObjectURL(new Blob([text], { type: 'text/plain' })), `${spec.type.id}-${spec.size.id}-pattern.txt`)
+                download(
+                  URL.createObjectURL(new Blob([text], { type: 'text/plain' })),
+                  `${spec.type.id}-${spec.size.id}-pattern.txt`,
+                )
               }
             >
               <Icon name="download" /> .txt
