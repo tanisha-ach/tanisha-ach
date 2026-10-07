@@ -105,7 +105,7 @@ function HatModel({ spec }: { spec: HatSpec }) {
   // takes up more fabric than the crown shaping alone.
   const totalArc = spec.bodyIn + spec.crownIn;
   const domeA = R * 0.985;
-  const domeArc = Math.max(spec.crownIn, Math.min(quarterEllipse(domeA, R * 0.9), totalArc * 0.7));
+  const domeArc = Math.max(spec.crownIn, Math.min(quarterEllipse(domeA, R * 0.9), totalArc * 0.85));
   const domeH = domeHeight(domeA, domeArc);
   const cylH = Math.max(0, totalArc - domeArc);
   const topY = bodyStart + cylH;
@@ -242,20 +242,23 @@ function HatModel({ spec }: { spec: HatSpec }) {
 
   const fuzz = useMemo(() => fuzzCanvas(), []);
   const fuzzTex = useCanvasTexture(fuzz, false, true);
+  if (fuzzTex) fuzzTex.repeat.set(3, 3);
   const pomGeo = useMemo(() => {
     const g = new THREE.IcosahedronGeometry(1.5, 6);
     const p = g.attributes.position as THREE.BufferAttribute;
     const v = new THREE.Vector3();
     for (let i = 0; i < p.count; i++) {
       v.fromBufferAttribute(p, i);
-      const n = Math.sin(v.x * 7.1) * Math.cos(v.y * 6.3) * Math.sin(v.z * 5.7);
-      v.multiplyScalar(1 + 0.06 * n);
+      const n =
+        0.5 * Math.sin(v.x * 9.1 + v.y * 3) * Math.cos(v.y * 8.3 - v.z * 2) +
+        0.5 * Math.sin(v.z * 23.7 + v.x * 11) * Math.cos(v.y * 19.1);
+      v.multiplyScalar(1 + 0.035 * n);
       p.setXYZ(i, v.x, v.y, v.z);
     }
     g.computeVertexNormals();
     return g;
   }, []);
-  const pomPos = useMemo(() => deform(new THREE.Vector3(0, topY + domeH + 1.2, 0)), [deform, topY, domeH]);
+  const pomPos = useMemo(() => deform(new THREE.Vector3(0, topY + domeH + 1.05, 0)), [deform, topY, domeH]);
 
   const headR = R * 0.95;
   const fabric = {
@@ -289,9 +292,10 @@ function HatModel({ spec }: { spec: HatSpec }) {
             color={palette[pomColor] ?? palette[0]}
             roughness={1}
             sheen={1}
-            sheenRoughness={0.9}
+            sheenRoughness={0.5}
+            sheenColor={palette[pomColor] ?? palette[0]}
             bumpMap={fuzzTex}
-            bumpScale={3}
+            bumpScale={6}
           />
         </mesh>
       )}
@@ -317,7 +321,7 @@ export function HatViewer() {
   return (
     <div className="viewer">
       <Canvas
-        shadows
+        shadows="percentage"
         dpr={[1, 2]}
         camera={{ position: [0, midY + 7, 23], fov: 34 }}
         gl={{ preserveDrawingBuffer: true, antialias: true }}
