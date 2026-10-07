@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>30 Days of Building — Tanisha Acharya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4efe8;
+        --card: #fffdf9;
+        --ink: #2b2522;
+        --muted: #7d726a;
+        --line: #e7ddd2;
+        --accent: #b5523b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1000px 500px at 90% -10%, #f9dccf 0%, transparent 60%),
+          radial-gradient(800px 500px at -10% 110%, #e6e0ef 0%, transparent 55%),
+          var(--bg);
+      }
+      main {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 72px 28px;
+      }
+      .eyebrow {
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin: 0 0 10px;
+      }
+      h1 {
+        font-family: Fraunces, Georgia, serif;
+        font-size: clamp(40px, 6vw, 64px);
+        line-height: 1.05;
+        margin: 0 0 14px;
+        letter-spacing: -0.02em;
+      }
+      .lede {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 560px;
+        line-height: 1.55;
+        margin: 0 0 44px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px;
+      }
+      .day {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 150px;
+        border-radius: 18px;
+        padding: 16px;
+        border: 1.5px dashed #d8cabd;
+        color: #b3a69b;
+        text-decoration: none;
+      }
+      .day .n {
+        font-family: Fraunces, Georgia, serif;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .day.done {
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        box-shadow: 0 1px 2px rgba(60, 40, 30, 0.05), 0 10px 28px -14px rgba(60, 40, 30, 0.25);
+        transition: transform 0.15s, box-shadow 0.15s;
+        grid-column: span 2;
+      }
+      .day.done:hover {
+        transform: translateY(-2px);
+      }
+      .day.done .n {
+        color: var(--accent);
+      }
+      .day h2 {
+        font-family: Fraunces, Georgia, serif;
+        font-size: 22px;
+        margin: 8px 0 6px;
+      }
+      .day p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .open {
+        margin-top: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      footer {
+        margin-top: 56px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      footer a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Tanisha Acharya</p>
+      <h1>30 Days of Building</h1>
+      <p class="lede">One small project a day for 30 days, going from design brief to a working, deployed interface with AI.</p>
+      <div class="grid" id="days">
+        <a class="day done" href="day-01-beanie-designer/">
+          <span class="n">Day 01</span>
+          <div>
+            <h2>Beanie Designer</h2>
+            <p>Paint a colorwork chart, see it on a live 3D knitted hat, and export a written pattern.</p>
+          </div>
+          <span class="open">Open →</span>
+        </a>
+      </div>
+      <footer>
+        Source on <a href="https://github.com/tanisha-ach/30-days-of-building">GitHub</a>.
+      </footer>
+    </main>
+    <script>
+      const grid = document.getElementById('days');
+      const done = grid.querySelectorAll('.day.done').length;
+      for (let d = done + 1; d <= 30; d++) {
+        const el = document.createElement('div');
+        el.className = 'day';
+        el.innerHTML = `<span class="n">Day ${String(d).padStart(2, '0')}</span><span>Coming soon</span>`;
+        grid.appendChild(el);
+      }
+    </script>
+  </body>
+</html>
