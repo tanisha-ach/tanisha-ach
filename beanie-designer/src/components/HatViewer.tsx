@@ -258,7 +258,7 @@ function HatModel({ spec }: { spec: HatSpec }) {
     g.computeVertexNormals();
     return g;
   }, []);
-  const pomPos = useMemo(() => deform(new THREE.Vector3(0, topY + domeH + 1.05, 0)), [deform, topY, domeH]);
+  const pomPos = useMemo(() => deform(new THREE.Vector3(0, topY + domeH + 0.8, 0)), [deform, topY, domeH]);
 
   const headR = R * 0.95;
   const fabric = {
