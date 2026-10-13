@@ -25,11 +25,11 @@ Each style follows a Purl Soho pattern. The proportions live in [`src/config/hat
 
 | Style | Source | Brim | Crown |
 | --- | --- | --- | --- |
-| Plain hat with rib | [Hat In The Round](https://www.purlsoho.com/create/2015/07/06/learn-to-knit-a-hat-in-the-round-kit/) | k2, p2 rib | 8 wedges, k2tog (assumed — see below) |
+| Plain hat with rib | [Super Soft Merino Hats for Everyone](https://www.purlsoho.com/create/2012/11/23/whits-knits-super-soft-merino-hats-for-everyone/) | k3, p3 rib, 5–7 rounds | 6 wedges, k2tog every other round to 36 sts, then every round |
 | Plain hat, no rib | [Essential Hat](https://www.purlsoho.com/create/2019/09/20/essential-hat-mitten-and-hand-warmer-set/) | rolled stockinette edge | top-down, 6 increases every 2nd (then 3rd) round |
 | Short hat with rib | [Classic Hat in Wigeon](https://www.purlsoho.com/create/2024/02/05/classic-hat-mittens-in-wigeon/) | k2, slip 1 rib, hemmed double cuff | 5 sections, paired ssk/k2tog every 3rd then 2nd round |
 | Hat with cuff | [Giving Hat](https://www.purlsoho.com/create/2025/12/06/giving-hat/) | p2, k2 rib, folded up | 4 sections, paired ssk/k2tog every other round |
 
-Proportions are stored in inches per size, so they scale to any gauge. With each pattern's own gauge, the stitch counts match the three free patterns (for example, Giving Hat 60/68/76/84/92 and Wigeon 120/135/144/156). Hat In The Round's full instructions are a paid booklet, so only its sizes, gauge and rib come from the source. Its rib depth, height and crown are standard proportions. Sizes a pattern doesn't include are interpolated, and the app flags them.
+Proportions are stored in inches per size, so they scale to any gauge. With each pattern's own gauge, the stitch counts match the source patterns (for example, Super Soft Merino 36/42/48/54/60, Giving Hat 60/68/76/84/92 and Wigeon 120/135/144/156). The Super Soft Merino pattern gives no row gauge, so 20 rounds per 4" is inferred from its rib and crown heights. Sizes a pattern doesn't include are interpolated, and the app flags them.
 
 To add a style, add an entry to `HAT_TYPES`. If it needs a new decrease scheme, add a crown kind to `lib/crown.ts`.

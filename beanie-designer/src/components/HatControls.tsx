@@ -12,6 +12,7 @@ export function HatControls() {
   const s = useDesign();
   const spec = useSpec();
   const type = spec.type;
+  const g = { sts: spec.stsPerIn * 4, rows: spec.rowsPerIn * 4 };
 
   return (
     <section className="card">
@@ -86,10 +87,10 @@ export function HatControls() {
             <input
               type="number"
               step={0.5}
-              min={8}
+              min={6}
               max={48}
-              value={s.gauge.sts}
-              onChange={(e) => s.set({ usePatternGauge: false, gauge: { ...s.gauge, sts: Math.max(8, +e.target.value || 8) } })}
+              value={g.sts}
+              onChange={(e) => s.set({ usePatternGauge: false, gauge: { ...g, sts: Math.max(6, +e.target.value || 6) } })}
             />
             stitches
           </label>
@@ -97,10 +98,10 @@ export function HatControls() {
             <input
               type="number"
               step={0.5}
-              min={8}
+              min={6}
               max={64}
-              value={s.gauge.rows}
-              onChange={(e) => s.set({ usePatternGauge: false, gauge: { ...s.gauge, rows: Math.max(8, +e.target.value || 8) } })}
+              value={g.rows}
+              onChange={(e) => s.set({ usePatternGauge: false, gauge: { ...g, rows: Math.max(6, +e.target.value || 6) } })}
             />
             rounds
           </label>

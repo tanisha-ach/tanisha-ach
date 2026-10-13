@@ -99,7 +99,10 @@ export function computeSpec(input: DesignInput): HatSpec {
 
   // Body = everything between the brim band and the crown, in knitted length.
   const rollIn = type.brim.kind === 'rolled' ? (type.brim.rollIn ?? 0.5) : 0;
-  const bodyIn = Math.max(0.5, dims.heightIn + rollIn - brimBandIn - foldIn - crownIn);
+  const bodyIn = Math.max(
+    0.5,
+    dims.bodyToIn !== undefined ? dims.bodyToIn - brimBandIn - foldIn : dims.heightIn + rollIn - brimBandIn - foldIn - crownIn,
+  );
   const bodyRows = Math.max(2, Math.round(bodyIn * rowsPerIn));
   const wornHeightIn = dims.heightIn - foldIn;
 

@@ -24,8 +24,8 @@ export type BrimKind =
 export type RibPattern = string;
 
 export type CrownStyle =
-  /** N wedges, one k2tog at the end of each wedge. */
-  | { kind: 'wedge'; sections: number; everyOtherUntilPerSection: number; endPerSection: number }
+  /** N wedges, one k2tog at the end of each wedge; `written: 'rounds'` spells out every round. */
+  | { kind: 'wedge'; sections: number; everyOtherUntilPerSection: number; endPerSection: number; written?: 'markers' | 'rounds' }
   /** Paired ssk … k2tog at the edges of each section, every other round. */
   | { kind: 'paired'; sections: number; border: 0 | 1; thirdRoundShare: number; finishTo3: boolean; shiftStart: number }
   /** Top-down: cast on at the crown and increase in wedges. */
@@ -42,6 +42,8 @@ export interface SizeSpec {
    * curl allowance (rolled).
    */
   brimIn: number;
+  /** Length to knit from the cast-on before the crown, when the pattern states it. */
+  bodyToIn?: number;
 }
 
 export interface HatType {
@@ -62,6 +64,8 @@ export interface HatType {
     rowFactor?: number;
     /** Inches the edge curls (rolled brims). */
     rollIn?: number;
+    /** Write the rib as a round count instead of a measurement. */
+    byRounds?: boolean;
   };
   crown: CrownStyle;
   /** 0 = snug, 1 = very slouchy (crown droops to the back). */
@@ -77,28 +81,29 @@ export const HAT_TYPES: HatType[] = [
   {
     id: 'plain-rib',
     name: 'Plain hat with rib',
-    tagline: 'The classic: k2, p2 rib and a stockinette body worked bottom-up.',
+    tagline: 'Short k3, p3 rib, stockinette body and a quick 6-wedge crown, worked bottom-up.',
     source: {
-      title: 'Purl Soho — Hat In The Round',
-      url: 'https://www.purlsoho.com/create/2015/07/06/learn-to-knit-a-hat-in-the-round-kit/',
+      title: 'Purl Soho — Super Soft Merino Hats for Everyone',
+      url: 'https://www.purlsoho.com/create/2012/11/23/whits-knits-super-soft-merino-hats-for-everyone/',
     },
     construction: 'bottom-up',
-    gauge: { sts: 18, rows: 24 },
-    brim: { kind: 'rib', rib: 'KKPP', label: 'k2, p2 rib' },
-    crown: { kind: 'wedge', sections: 8, everyOtherUntilPerSection: 5, endPerSection: 1 },
+    gauge: { sts: 12, rows: 20 },
+    brim: { kind: 'rib', rib: 'KKKPPP', label: 'k3, p3 rib', byRounds: true },
+    crown: { kind: 'wedge', sections: 6, everyOtherUntilPerSection: 6, endPerSection: 1, written: 'rounds' },
     slouch: 0,
+    // Rib is 5 (5, 6, 6, 7) rounds; brimIn is that count at the 20-round gauge.
     sizes: {
-      baby: { circIn: 13.25, heightIn: 6.5, brimIn: 1.25 },
-      toddler: { circIn: 15, heightIn: 7, brimIn: 1.5 },
-      child: { circIn: 16.75, heightIn: 7.75, brimIn: 1.5 },
-      'adult-s': { circIn: 18.5, heightIn: 8.25, brimIn: 1.75 },
-      'adult-m': { circIn: 19.5, heightIn: 8.5, brimIn: 1.75 },
-      'adult-l': { circIn: 20.5, heightIn: 9, brimIn: 1.75 },
+      baby: { circIn: 12, heightIn: 6, brimIn: 1, bodyToIn: 4.5 },
+      toddler: { circIn: 14, heightIn: 6.75, brimIn: 1, bodyToIn: 5 },
+      child: { circIn: 16, heightIn: 7.5, brimIn: 1.2, bodyToIn: 5.5 },
+      'adult-s': { circIn: 18, heightIn: 8.25, brimIn: 1.2, bodyToIn: 6 },
+      'adult-m': { circIn: 19, heightIn: 8.625, brimIn: 1.3, bodyToIn: 6.25 },
+      'adult-l': { circIn: 20, heightIn: 9, brimIn: 1.4, bodyToIn: 6.5 },
     },
-    extrapolatedSizes: ['baby', 'adult-m'],
+    extrapolatedSizes: ['adult-m'],
     assumptions: [
-      'The full instructions are a paid booklet; only sizes, finished circumference, gauge and the k2, p2 rib are published.',
-      'Rib depth, total height and the 8-wedge crown are standard proportions, not taken from the booklet.',
+      'The pattern gives only a stitch gauge (12 sts = 4"); 20 rounds per 4" is inferred from its rib and crown heights.',
+      "Sizes map Women's → Adult S and Men's → Adult L.",
     ],
   },
   {

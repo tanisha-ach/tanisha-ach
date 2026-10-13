@@ -132,7 +132,9 @@ export function writePattern(spec: HatSpec, o: PatternOptions): PatternSection[]
       );
       brim.push(`Round 1: ${ribRound(type.brim.rib)}`);
       brim.push(
-        `Repeat Round 1 until the piece measures ${inch(dims.brimIn)} from the cast-on edge (about ${spec.brimRows} rounds).`,
+        type.brim.byRounds
+          ? `Repeat Round 1 ${spec.brimRows - 1} more times. [${spec.brimRows} rib rounds]`
+          : `Repeat Round 1 until the piece measures ${inch(dims.brimIn)} from the cast-on edge (about ${spec.brimRows} rounds).`,
       );
     }
     const adj = adjustRound(spec.brimSts, spec.bodySts);
@@ -144,7 +146,9 @@ export function writePattern(spec: HatSpec, o: PatternOptions): PatternSection[]
     body.push(...chartLines(spec, o, false));
     const from = type.brim.kind === 'hem-cuff' ? 'the folded edge of the cuff' : 'the cast-on edge';
     body.push(
-      `With MC, knit every round until the piece measures ${inch(dims.heightIn - spec.crownIn)} from ${from}, or ${inch(spec.crownIn)} less than the desired height.`,
+      dims.bodyToIn !== undefined
+        ? `With MC, knit every round until the piece measures ${inch(dims.bodyToIn)} from ${from}.`
+        : `With MC, knit every round until the piece measures ${inch(dims.heightIn - spec.crownIn)} from ${from}, or ${inch(spec.crownIn)} less than the desired height.`,
     );
     const adj2 = adjustRound(spec.bodySts, spec.crown.sts);
     if (adj2) body.push(adj2);
