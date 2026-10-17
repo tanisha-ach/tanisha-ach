@@ -34,16 +34,17 @@ function sprite(kind: StitchKind, color: string | null, w: number, h: number, fl
   cv.height = Math.max(1, h);
   const ctx = cv.getContext('2d')!;
   const bump = color === null;
-  ctx.fillStyle = bump ? '#262626' : shade(color, kind === 'purl' ? -0.28 : -0.42);
+  ctx.fillStyle = bump ? '#262626' : shade(color, kind === 'purl' ? -0.16 : -0.36);
   ctx.fillRect(0, 0, w, h);
 
   if (kind === 'purl') {
     const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.6);
     g.addColorStop(0, bump ? '#8a8a8a' : shade(color, 0.04));
-    g.addColorStop(1, bump ? '#3a3a3a' : shade(color, -0.3));
+    g.addColorStop(1, bump ? '#4a4a4a' : shade(color, -0.2));
     ctx.fillStyle = g;
+    // Reverse stockinette: wide, overlapping bumps that read as soft horizontal ridges.
     ctx.beginPath();
-    ctx.ellipse(w / 2, h * 0.5, w * 0.52, h * 0.36, 0, 0, Math.PI * 2);
+    ctx.ellipse(w / 2, h * 0.55, w * 0.68, h * 0.42, 0, 0, Math.PI * 2);
     ctx.fill();
   } else {
     ctx.save();
@@ -67,12 +68,100 @@ function sprite(kind: StitchKind, color: string | null, w: number, h: number, fl
       ctx.beginPath();
       ctx.ellipse(cx, h * 0.5, w * 0.27, h * 0.66, side * -0.62, 0, Math.PI * 2);
       ctx.fill();
+      // Twisted plies across the leg and a soft highlight along it.
+      ctx.save();
+      ctx.clip();
+      ctx.translate(cx, h * 0.5);
+      ctx.rotate(side * -0.62);
+      ctx.strokeStyle = bump ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.14)';
+      ctx.lineWidth = Math.max(0.6, w * 0.05);
+      for (let t = -1.1; t <= 1.1; t += 0.36) {
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.35, t * h * 0.62 - w * 0.16);
+        ctx.lineTo(w * 0.35, t * h * 0.62 + w * 0.16);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = bump ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.13)';
+      ctx.lineWidth = Math.max(0.8, w * 0.07);
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.04, -h * 0.55);
+      ctx.lineTo(-w * 0.04, h * 0.55);
+      ctx.stroke();
+      ctx.restore();
     }
     ctx.restore();
   }
   spriteCache.set(key, cv);
   if (spriteCache.size > 4000) spriteCache.clear();
   return cv;
+}
+
+let seed = 7;
+const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+let fuzzTile: HTMLCanvasElement | null = null;
+
+function fuzz() {
+  if (fuzzTile) return fuzzTile;
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d')!;
+  for (let i = 0; i < 2600; i++) {
+    const v = rand() < 0.5 ? 255 : 0;
+    ctx.strokeStyle = `rgba(${v},${v},${v},${0.18 + rand() * 0.25})`;
+    ctx.lineWidth = 0.6 + rand() * 0.6;
+    const x = rand() * 256;
+    const y = rand() * 256;
+    const a = rand() * Math.PI;
+    const l = 2 + rand() * 7;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.quadraticCurveTo(
+      x + Math.cos(a + 0.6) * l * 0.5,
+      y + Math.sin(a + 0.6) * l * 0.5,
+      x + Math.cos(a) * l,
+      y + Math.sin(a) * l,
+    );
+    ctx.stroke();
+  }
+  return (fuzzTile = c);
+}
+
+/** Hand-knit variation: each stitch a touch lighter or darker, plus a fine halo of fibre. */
+function yarnify(
+  color: CanvasRenderingContext2D,
+  bump: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+  cols: number,
+  rows: number,
+) {
+  seed = 7 + cols * 31 + rows;
+  const n = document.createElement('canvas');
+  n.width = cols;
+  n.height = Math.max(1, rows);
+  const nx = n.getContext('2d')!;
+  const img = nx.createImageData(n.width, n.height);
+  for (let i = 0; i < n.width * n.height; i++) {
+    const v = 128 + (rand() - 0.5) * 34;
+    img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v;
+    img.data[i * 4 + 3] = 255;
+  }
+  nx.putImageData(img, 0, 0);
+  for (const [ctx, jitter, halo] of [
+    [color, 0.6, 0.2],
+    [bump, 0.35, 0.3],
+  ] as const) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'soft-light';
+    ctx.globalAlpha = jitter;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(n, 0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.globalAlpha = halo;
+    ctx.fillStyle = ctx.createPattern(fuzz(), 'repeat')!;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
 }
 
 function canvasPair(w: number, h: number) {
@@ -86,7 +175,7 @@ function canvasPair(w: number, h: number) {
 }
 
 function cellWidth(sts: number) {
-  return Math.max(6, Math.min(18, Math.floor(4096 / sts)));
+  return Math.max(6, Math.min(22, Math.floor(4096 / sts)));
 }
 
 /** Body + crown texture. Canvas bottom = first body round, top = crown tip. */
@@ -153,6 +242,7 @@ export function drawBody(
       b.drawImage(sprite('knit', null, cw, h, flip, isMark ? lean : 0), col * cw, y);
     }
   }
+  yarnify(c, b, W, H, N, Math.round(H / Math.max(4, bodyPx / Math.max(1, spec.bodyRows))));
   return out;
 }
 
@@ -192,5 +282,6 @@ export function drawRib(sts: number, rowsPerIn: number, rib: string, color: stri
     }
     b.globalCompositeOperation = 'source-over';
   }
+  yarnify(c, b, sts * cw, rows * rh, sts, rows);
   return { ...out, rowsPerInch: rows };
 }

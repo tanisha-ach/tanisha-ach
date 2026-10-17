@@ -29,7 +29,6 @@ interface DesignState {
   brimColor: number;
   pomPom: boolean;
   pomColor: number;
-  showHead: boolean;
 
   set: (p: Partial<DesignState>) => void;
   beginStroke: () => void;
@@ -68,7 +67,6 @@ export const useDesign = create<DesignState>()(
       brimColor: 0,
       pomPom: false,
       pomColor: 1,
-      showHead: false,
 
       set: (p) => set(p),
       beginStroke: () => set((s) => ({ past: [...s.past.slice(-79), s.chart], future: [] })),
@@ -123,8 +121,12 @@ export const useDesign = create<DesignState>()(
     }),
     {
       name: 'beanie-designer',
-      version: 1,
+      version: 2,
       partialize: ({ past: _p, future: _f, tool: _t, ...rest }) => rest,
+      migrate: (state) => {
+        delete (state as { showHead?: boolean }).showHead;
+        return state as DesignState;
+      },
     },
   ),
 );
