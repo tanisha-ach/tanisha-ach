@@ -83,6 +83,8 @@ Research insight → Figma prototype → Design brief → Claude Code → Deploy
 
 → **[AI-Built Frontend Portfolio](https://tanisha-ach.github.io/portfolio/)** — production interfaces shipped with Claude Code
 
+→ **[Beanie Designer](day-01-beanie-designer)** — Day 01 of 30 Days of Building: paint a colorwork chart, preview it on a 3D knitted hat, and export a written pattern
+
 ---
 
 <div align="center">
